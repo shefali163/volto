@@ -3,7 +3,11 @@
  * @module reducers/addons/addons
  */
 
-import { INSTALL_ADDON, LIST_ADDONS, UNINSTALL_ADDON } from '../../constants/ActionTypes';
+import {
+  INSTALL_ADDON,
+  LIST_ADDONS,
+  UNINSTALL_ADDON,
+} from '../../constants/ActionTypes';
 
 const initialState = {
   error: null,
@@ -14,14 +18,19 @@ const initialState = {
   loading: false,
 };
 
-
-function addonsSorter(a, b){
-  var titleA = a.title.toUpperCase();
-  var titleB = b.title.toUpperCase();
-  if (titleA < titleB){
+/**
+ * Case-insensitive sorting method for Addons names.
+ * @function addonsSorter
+ * @param {String} a Add-on name.
+ * @param {String} b Add-on name.
+ * @returns {Number} Comparison result.
+ */
+function addonsSorter(a, b) {
+  const titleA = a.title.toUpperCase();
+  const titleB = b.title.toUpperCase();
+  if (titleA < titleB) {
     return -1;
-  }
-  else if (titleA > titleB){
+  } else if (titleA > titleB) {
     return 1;
   }
   return 0;
@@ -51,15 +60,12 @@ export default function addons(state = initialState, action = {}) {
       return {
         ...state,
         error: null,
-        installedAddons: action.result.items.filter(elem => {
-            return elem.is_installed === true;
-        }).sort(addonsSorter),
-        availableAddons: action.result.items.filter(elem => {
-            return elem.is_installed === false;
-        }).sort(addonsSorter),
-        upgradableAddons: action.result.items.filter(elem => {
-            return elem.upgrade_info['available'] === true;
-        }).sort(addonsSorter),
+        installedAddons: action.result.items
+          .filter(elem => elem.is_installed === true).sort(addonsSorter),
+        availableAddons: action.result.items
+          .filter(elem => elem.is_installed === false).sort(addonsSorter),
+        upgradableAddons: action.result.items
+          .filter(elem => elem.upgrade_info['available'] === true).sort(addonsSorter),
         loaded: true,
         loading: false,
       };
