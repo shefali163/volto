@@ -3,7 +3,7 @@
  * @module reducers/addons/addons
  */
 
-import { LIST_ADDONS } from '../../constants/ActionTypes';
+import { INSTALL_ADDON, LIST_ADDONS, UNINSTALL_ADDON } from '../../constants/ActionTypes';
 
 const initialState = {
   error: null,
@@ -36,14 +36,18 @@ function addonsSorter(a, b){
  */
 export default function addons(state = initialState, action = {}) {
   switch (action.type) {
+    case `${INSTALL_ADDON}_PENDING`:
     case `${LIST_ADDONS}_PENDING`:
+    case `${UNINSTALL_ADDON}_PENDING`:
       return {
         ...state,
         error: null,
         loaded: false,
         loading: true,
       };
+    case `${INSTALL_ADDON}_SUCCESS`:
     case `${LIST_ADDONS}_SUCCESS`:
+    case `${UNINSTALL_ADDON}_SUCCESS`:
       return {
         ...state,
         error: null,
@@ -59,7 +63,9 @@ export default function addons(state = initialState, action = {}) {
         loaded: true,
         loading: false,
       };
+    case `${INSTALL_ADDON}_FAIL`:
     case `${LIST_ADDONS}_FAIL`:
+    case `${UNINSTALL_ADDON}_FAIL`:
       return {
         ...state,
         error: action.error,

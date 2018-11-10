@@ -18,7 +18,7 @@ import {
   intlShape,
 } from 'react-intl';
 
-import { listAddons } from '../../../actions';
+import { installAddon, listAddons, uninstallAddon } from '../../../actions';
 import { getBaseUrl } from '../../../helpers';
 import { Toolbar } from '../../../components';
 
@@ -78,7 +78,7 @@ const messages = defineMessages({
     activeIndex: state.activeIndex,
     pathname: props.location.pathname,
   }),
-  dispatch => bindActionCreators({ listAddons }, dispatch),
+  dispatch => bindActionCreators({ installAddon, listAddons, uninstallAddon }, dispatch),
 )
 /**
  * AddonsControlpanel class.
@@ -93,6 +93,8 @@ export default class AddonsControlpanel extends Component {
    */
   static propTypes = {
     listAddons: PropTypes.func.isRequired,
+    installAddon: PropTypes.func.isRequired,
+    uninstallAddon: PropTypes.func.isRequired,
     installedAddons: PropTypes.arrayOf(
       PropTypes.shape({
         '@id': PropTypes.string,
@@ -140,6 +142,8 @@ export default class AddonsControlpanel extends Component {
   constructor(props) {
     super(props);
     this.onAccordionClick = this.onAccordionClick.bind(this);
+    this.onInstall = this.onInstall.bind(this);
+    this.onUninstall = this.onUninstall.bind(this);
     this.state = {
       activeIndex: -1,
       installedAddons: [],
@@ -163,6 +167,33 @@ export default class AddonsControlpanel extends Component {
   }
 
   /**
+   * Install handler
+   * @method onInstall
+   * @param {Object} event Event object.
+   * @param {string} value Install value.
+   * @returns {undefined}
+   */
+  onInstall(event, { value }) {
+    event.preventDefault();
+    this.props.installAddon(value);
+    this.render();
+  }
+
+  /**
+   * Uninstall handler
+   * @method onUninstall
+   * @param {Object} event Event object.
+   * @param {string} value Uninstall value.
+   * @returns {undefined}
+   */
+  onUninstall(event, { value }) {
+    event.preventDefault();
+    this.props.uninstallAddon(value);
+    this.render();
+  }
+
+
+  /**
    * Component will mount
    * @method componentWillMount
    * @returns {undefined}
@@ -172,6 +203,11 @@ export default class AddonsControlpanel extends Component {
     this.props.listAddons();
   }
 
+
+  componentWillReceiveProps(nextProps) {
+    console.log('in componentWillReceiveProps');
+    console.log(nextProps);
+  } 
   /**
    * Render method.
    * @method render
@@ -191,16 +227,20 @@ export default class AddonsControlpanel extends Component {
               />
             </Segment>
 
-            {this.props.upgradableAddons.length && (
+            {this.props.upgradableAddons.length>0 && (
                 <Message
                   icon="info"
-                  attached
-                  header={this.props.intl.formatMessage(messages.updatesAvailable)}
-                  content={this.props.intl.formatMessage(
-                    messages.updateInstalledAddons,
-                  )}
+                  attached>
 
-                />
+                  <Message.Header>
+                    <FormattedMessage
+                      id="Updates available"
+                      defaultMessage="Updates available" />
+                  </Message.Header>
+                  <FormattedMessage
+                    id="Update installed addons"
+                    defaultMessage="Update installed addons" />
+                </Message>
             )}
 
             <Segment>
@@ -262,7 +302,9 @@ export default class AddonsControlpanel extends Component {
                         </Button>
                       )}
 
-                      <Button primary>
+                      <Button primary
+                              onClick={this.onUninstall}
+                              value={item.id}>
                         <FormattedMessage
                           id="Uninstall"
                           defaultMessage="Uninstall"
@@ -302,7 +344,10 @@ export default class AddonsControlpanel extends Component {
                       />
 
                       {item.version}
-                      <Button primary>
+                      <Button primary
+                              onClick={this.onInstall}
+                              value={item.id}
+                      >
                         <FormattedMessage
                           id="Install"
                           defaultMessage="Install"
