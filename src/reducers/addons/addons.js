@@ -61,11 +61,14 @@ export default function addons(state = initialState, action = {}) {
         ...state,
         error: null,
         installedAddons: action.result.items
-          .filter(elem => elem.is_installed === true).sort(addonsSorter),
+          .filter(elem => elem.is_installed === true)
+          .sort(addonsSorter),
         availableAddons: action.result.items
-          .filter(elem => elem.is_installed === false).sort(addonsSorter),
+          .filter(elem => elem.is_installed === false)
+          .sort(addonsSorter),
         upgradableAddons: action.result.items
-          .filter(elem => elem.upgrade_info['available'] === true).sort(addonsSorter),
+          .filter(elem => elem.upgrade_info.available === true)
+          .sort(addonsSorter),
         loaded: true,
         loading: false,
       };
