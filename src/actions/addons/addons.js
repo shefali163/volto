@@ -9,18 +9,18 @@ import {
   UNINSTALL_ADDON,
 } from '../../constants/ActionTypes';
 
-
 /**
  * List addons function
  * @function listAddons
- * @param {string} query Query
  * @returns {Object} List addons action
  */
 export function listAddons() {
-	console.log('in listAddons');
   return {
     type: LIST_ADDONS,
-    promise: api => api.get('/@addons'),
+    request: {
+      op: 'get',
+      path: `/@addons`,
+    },
   };
 }
 
