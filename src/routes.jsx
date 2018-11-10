@@ -60,7 +60,7 @@ export const defaultRoutes = [
   },
   {
     path: '/controlpanel/addons',
-    component: 'AddonsControlpanel'
+    component: AddonsControlpanel,
   },
   {
     path: '/controlpanel/moderate-comments',
