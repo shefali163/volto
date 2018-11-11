@@ -7,16 +7,19 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Portal } from 'react-portal';
-import { Accordion, Button, Divider, Header, Icon, Label, Message, Segment } from 'semantic-ui-react';
-import jwtDecode from 'jwt-decode';
 import {
-  FormattedMessage,
-  defineMessages,
-  injectIntl,
-  intlShape,
-} from 'react-intl';
+  Accordion,
+  Button,
+  Divider,
+  Header,
+  Icon,
+  Label,
+  Message,
+  Segment,
+} from 'semantic-ui-react';
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
 import { installAddon, listAddons, uninstallAddon } from '../../../actions';
 import { getBaseUrl } from '../../../helpers';
@@ -29,7 +32,8 @@ const messages = defineMessages({
   },
   addAddons: {
     id: 'Add Addons',
-    defaultMessage: 'To make new add-ons show up here, add them to your buildout configuration, run buildout, and restart the server process. For detailed instructions see',
+    defaultMessage:
+      'To make new add-ons show up here, add them to your buildout configuration, run buildout, and restart the server process. For detailed instructions see',
   },
   addonsSettings: {
     id: 'Add-ons Settings',
@@ -77,7 +81,8 @@ const messages = defineMessages({
     upgradableAddons: state.addons.upgradableAddons,
     pathname: props.location.pathname,
   }),
-  dispatch => bindActionCreators({ installAddon, listAddons, uninstallAddon }, dispatch),
+  dispatch =>
+    bindActionCreators({ installAddon, listAddons, uninstallAddon }, dispatch),
 )
 /**
  * AddonsControlpanel class.
@@ -97,38 +102,38 @@ export default class AddonsControlpanel extends Component {
     installedAddons: PropTypes.arrayOf(
       PropTypes.shape({
         '@id': PropTypes.string,
-        'id': PropTypes.string,
-        'title': PropTypes.string,
-        'version': PropTypes.string,
-        'description': PropTypes.string,
-        'upgrade_info': PropTypes.shape({
-          'available': PropTypes.boolean
-        })
-      })
+        id: PropTypes.string,
+        title: PropTypes.string,
+        version: PropTypes.string,
+        description: PropTypes.string,
+        upgrade_info: PropTypes.shape({
+          available: PropTypes.boolean,
+        }),
+      }),
     ).isRequired,
     availableAddons: PropTypes.arrayOf(
       PropTypes.shape({
         '@id': PropTypes.string,
-        'id': PropTypes.string,
-        'title': PropTypes.string,
-        'version': PropTypes.string,
-        'description': PropTypes.string,
-        'upgrade_info': PropTypes.shape({
-          'available': PropTypes.boolean
-        })
-      })
+        id: PropTypes.string,
+        title: PropTypes.string,
+        version: PropTypes.string,
+        description: PropTypes.string,
+        upgrade_info: PropTypes.shape({
+          available: PropTypes.boolean,
+        }),
+      }),
     ).isRequired,
     upgradableAddons: PropTypes.arrayOf(
       PropTypes.shape({
         '@id': PropTypes.string,
-        'id': PropTypes.string,
-        'title': PropTypes.string,
-        'version': PropTypes.string,
-        'description': PropTypes.string,
-        'upgrade_info': PropTypes.shape({
-          'available': PropTypes.boolean
-        })
-      })
+        id: PropTypes.string,
+        title: PropTypes.string,
+        version: PropTypes.string,
+        description: PropTypes.string,
+        upgrade_info: PropTypes.shape({
+          available: PropTypes.boolean,
+        }),
+      }),
     ).isRequired,
   };
 
@@ -152,17 +157,17 @@ export default class AddonsControlpanel extends Component {
   }
 
   /**
-   * On accordion click handler
-   * @method onAccordionClick
-   * @param {object} event Event object.
+   * Component will mount
+   * @method componentWillMount
    * @returns {undefined}
    */
-  onAccordionClick(event, titleProps) {
-    const { index } = titleProps
-    const { activeIndex } = this.state.activeIndex
-    const newIndex = activeIndex === index ? -1 : index
+  componentWillMount() {
+    this.props.listAddons();
+  }
 
-    this.setState({ activeIndex: newIndex })
+  componentWillReceiveProps(nextProps) {
+    console.log('in componentWillReceiveProps');
+    console.log(nextProps);
   }
 
   /**
@@ -189,125 +194,111 @@ export default class AddonsControlpanel extends Component {
     this.props.uninstallAddon(value);
   }
 
-
   /**
-   * Component will mount
-   * @method componentWillMount
+   * On accordion click handler
+   * @method onAccordionClick
+   * @param {object} event Event object.
+   * @param {object} index Index of the accordion element being clicked
    * @returns {undefined}
    */
-  componentWillMount() {
-    console.log('in componentWillMount');
-    this.props.listAddons();
+  onAccordionClick(event, index) {
+    const { activeIndex } = this.state.activeIndex;
+    const newIndex = activeIndex === index ? -1 : index;
+    this.setState({ activeIndex: newIndex });
   }
 
-
-  componentWillReceiveProps(nextProps) {
-    console.log('in componentWillReceiveProps');
-    console.log(nextProps);
-  } 
   /**
    * Render method.
    * @method render
    * @returns {string} Markup for the component.
    */
   render() {
-
     return (
       <div id="page-addons">
         <Helmet title="Addons" />
         <Segment.Group raised>
-
-            <Segment className="primary">
-              <FormattedMessage
-                id="Add-ons Settings"
-                defaultMessage="Add-ons Settings"
-              />
-            </Segment>
-
-            {this.props.upgradableAddons.length>0 && (
-                <Message
-                  icon="info"
-                  attached>
-
-                  <Message.Header>
-                    <FormattedMessage
-                      id="Updates available"
-                      defaultMessage="Updates available" />
-                  </Message.Header>
-                  <FormattedMessage
-                    id="Update installed addons"
-                    defaultMessage="Update installed addons" />
-                </Message>
-            )}
-
-            <Segment>
-              <Header as="h3">
-                <FormattedMessage
-                  id="Activate and deactivate"
-                  defaultMessage="Activate and deactivate add-ons in the lists below."
-                />
-              </Header>
-              <FormattedMessage
-                id="Add Addons"
-                defaultMessage="To make new add-ons show up here, add them to your buildout configuration, run buildout, and restart the server process. For detailed instructions see"
-              />&nbsp;
-              <Link to="http://docs.plone.org/manage/installing/installing_addons.html">Installing a third party add-on</Link>.
-            </Segment>
-
-          <Segment key={`header-installed`} secondary>
+          <Segment className="primary">
             <FormattedMessage
-              id="Installed"
-              defaultMessage="Installed"
-            />:
+              id="Add-ons Settings"
+              defaultMessage="Add-ons Settings"
+            />
+          </Segment>
+          {this.props.upgradableAddons.length > 0 && (
+            <Message icon="info" attached>
+              <Message.Header>
+                <FormattedMessage
+                  id="Updates available"
+                  defaultMessage="Updates available"
+                />
+              </Message.Header>
+              <FormattedMessage
+                id="Update installed addons"
+                defaultMessage="Update installed addons"
+              />
+            </Message>
+          )}
+
+          <Segment>
+            <Header as="h3">
+              <FormattedMessage
+                id="Activate and deactivate"
+                defaultMessage="Activate and deactivate add-ons in the lists below."
+              />
+            </Header>
+            <FormattedMessage
+              id="Add Addons"
+              defaultMessage="To make new add-ons show up here, add them to your buildout configuration, run buildout, and restart the server process. For detailed instructions see"
+            />
+            &nbsp;
+            <Link to="http://docs.plone.org/manage/installing/installing_addons.html">
+              Installing a third party add-on
+            </Link>
+            .
+          </Segment>
+
+          <Segment key="header-installed" secondary>
+            <FormattedMessage id="Installed" defaultMessage="Installed" />:
             <Label circular>{this.props.installedAddons.length}</Label>
           </Segment>
 
-          <Segment key={`body-installed`} attached>
+          <Segment key="body-installed" attached>
             <Accordion>
               <Divider />
               {this.props.installedAddons.map((item, i) => (
-                <div>
-                  <Accordion.Title active={this.state.activeIndex === i} index={i} onClick={this.onAccordionClick}>
+                <div key={i}>
+                  <Accordion.Title
+                    active={this.state.activeIndex === i}
+                    index={i}
+                    onClick={this.onAccordionClick}
+                  >
                     {item.title}
-                    {item.upgrade_info['available'] && (
-                      <Label as='a'>
-                        <Icon name='circle' />
-                        <FormattedMessage
-                          id="Update"
-                          defaultMessage="Update"
-                        />
+                    {item.upgrade_info.available && (
+                      <Label as="a">
+                        <Icon name="circle" />
+                        <FormattedMessage id="Update" defaultMessage="Update" />
                       </Label>
                     )}
-                    <Icon name='dropdown' floated='right' />
+                    <Icon name="dropdown" floated="right" />
                   </Accordion.Title>
                   <Accordion.Content active={this.state.activeIndex === i}>
                     {item.description}
-                      <FormattedMessage
-                        id="Installed Version"
-                        defaultMessage="Installed Version"
-                      />&nbsp;
-
-                      {item.version}
-
-
-                      {item.upgrade_info['available'] && (
-                        <Button primary>
-                          <FormattedMessage
-                            id="Update"
-                            defaultMessage="Update"
-                          />
-                        </Button>
-                      )}
-
-                      <Button primary
-                              onClick={this.onUninstall}
-                              value={item.id}>
-                        <FormattedMessage
-                          id="Uninstall"
-                          defaultMessage="Uninstall"
-                        />
+                    <FormattedMessage
+                      id="Installed Version"
+                      defaultMessage="Installed Version"
+                    />
+                    &nbsp;
+                    {item.version}
+                    {item.upgrade_info.available && (
+                      <Button primary>
+                        <FormattedMessage id="Update" defaultMessage="Update" />
                       </Button>
-
+                    )}
+                    <Button primary onClick={this.onUninstall} value={item.id}>
+                      <FormattedMessage
+                        id="Uninstall"
+                        defaultMessage="Uninstall"
+                      />
+                    </Button>
                   </Accordion.Content>
                   <Divider />
                 </div>
@@ -315,49 +306,41 @@ export default class AddonsControlpanel extends Component {
             </Accordion>
           </Segment>
 
-          <Segment key={`header-available`} secondary>
-            <FormattedMessage
-              id="Available"
-              defaultMessage="Available"
-            />:
+          <Segment key="header-available" secondary>
+            <FormattedMessage id="Available" defaultMessage="Available" />:
             <Label circular>{this.props.availableAddons.length}</Label>
           </Segment>
 
-          <Segment key={`body-available`} attached>
+          <Segment key="body-available" attached>
             <Accordion>
               <Divider />
               {this.props.availableAddons.map((item, j) => (
-                <div>
-                  <Accordion.Title active={this.state.activeIndex === j} index={j} onClick={this.onAccordionClick}>
+                <div key={j}>
+                  <Accordion.Title
+                    active={this.state.activeIndex === j}
+                    index={j}
+                    onClick={this.onAccordionClick}
+                  >
                     {item.title}
-                    <Icon name='dropdown' floated='right' />
+                    <Icon name="dropdown" floated="right" />
                   </Accordion.Title>
                   <Accordion.Content active={this.state.activeIndex === j}>
                     {item.description}
 
-                      <FormattedMessage
-                        id="Installed Version"
-                        defaultMessage="Installed Version"
-                      />
-
-                      {item.version}
-                      <Button primary
-                              onClick={this.onInstall}
-                              value={item.id}
-                      >
-                        <FormattedMessage
-                          id="Install"
-                          defaultMessage="Install"
-                        />
-                      </Button>
-
+                    <FormattedMessage
+                      id="Installed Version"
+                      defaultMessage="Installed Version"
+                    />
+                    {item.version}
+                    <Button primary onClick={this.onInstall} value={item.id}>
+                      <FormattedMessage id="Install" defaultMessage="Install" />
+                    </Button>
                   </Accordion.Content>
                   <Divider />
                 </div>
               ))}
             </Accordion>
           </Segment>
-
         </Segment.Group>
 
         <Portal node={__CLIENT__ && document.getElementById('toolbar')}>
