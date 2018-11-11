@@ -75,7 +75,6 @@ const messages = defineMessages({
     installedAddons: state.addons.installedAddons,
     availableAddons: state.addons.availableAddons,
     upgradableAddons: state.addons.upgradableAddons,
-    activeIndex: state.activeIndex,
     pathname: props.location.pathname,
   }),
   dispatch => bindActionCreators({ installAddon, listAddons, uninstallAddon }, dispatch),
@@ -176,7 +175,6 @@ export default class AddonsControlpanel extends Component {
   onInstall(event, { value }) {
     event.preventDefault();
     this.props.installAddon(value);
-    this.render();
   }
 
   /**
@@ -189,7 +187,6 @@ export default class AddonsControlpanel extends Component {
   onUninstall(event, { value }) {
     event.preventDefault();
     this.props.uninstallAddon(value);
-    this.render();
   }
 
 
