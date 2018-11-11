@@ -33,7 +33,10 @@ export function listAddons() {
 export function installAddon(id) {
   return {
     type: INSTALL_ADDON,
-    promise: api => api.post(`/@addons/${id}/install`, { data: { id } }),
+    request: {
+      op: 'post',
+      path: `/@addons/${id}/install`,
+    },
   };
 }
 
@@ -43,10 +46,13 @@ export function installAddon(id) {
  * @param {string} id Addon id
  * @returns {Object} uninstall addon action.
  */
-export function uninstallAddon(id ) {
+export function uninstallAddon(id) {
 	console.log('uninstallAddon');
   return {
     type: UNINSTALL_ADDON,
-    promise: api => api.post(`/@addons/${id}/uninstall`, { data: { id } }),
+    request: {
+      op: 'post',
+      path: `/@addons/${id}/uninstall`,
+    },
   };
 }
