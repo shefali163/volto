@@ -7,6 +7,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
+import registry from '../../../../registry';
 
 /**
  * Not found function.
@@ -48,5 +49,7 @@ const NotFound = () => (
     </p>
   </Container>
 );
+
+registry.register(NotFound, '404');
 
 export default NotFound;

@@ -13,6 +13,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import { find } from 'lodash';
 import qs from 'query-string';
 import { views } from '~/config';
+import { registry } from '../../../registry';
 
 import {
   Comments,
@@ -214,9 +215,13 @@ export default class View extends Component {
    */
   render() {
     if (this.props.error) {
+      let view = registry.get('404');
+      if (view === null) {
+        view = NotFound;
+      }
       return (
         <div id="view">
-          <NotFound />
+          <view />
         </div>
       );
     }
